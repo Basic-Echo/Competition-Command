@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const QRCode = require('qrcode');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -79,6 +80,18 @@ app.delete('/api/awards/:id', (req, res) => {
 // === 托管前端静态文件 ===
 app.use(express.static(__dirname));
 app.get('/', (req, res) => res.redirect('/index.html'));
+
+// 启动时生成支持二维码
+const QR_FILE = path.join(__dirname, 'support-qr.png');
+QRCode.toFile(QR_FILE, '感谢支持，有心意足矣', {
+  width: 200,
+  margin: 1,
+  color: { dark: '#333333', light: '#ffffff' }
+}).then(() => {
+  console.log('二维码已生成:', QR_FILE);
+}).catch(err => {
+  console.error('二维码生成失败:', err);
+});
 
 app.listen(port, () => {
   console.log(`服务器运行在 http://localhost:${port}`);
