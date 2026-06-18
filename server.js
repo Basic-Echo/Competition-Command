@@ -82,8 +82,9 @@ app.use(express.static(__dirname));
 app.get('/', (req, res) => res.redirect('/index.html'));
 
 // 启动时生成支持二维码
+const BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
 const QR_FILE = path.join(__dirname, 'support-qr.png');
-QRCode.toFile(QR_FILE, '感谢支持，有心意足矣', {
+QRCode.toFile(QR_FILE, `${BASE_URL}/thanks.html`, {
   width: 200,
   margin: 1,
   color: { dark: '#333333', light: '#ffffff' }
