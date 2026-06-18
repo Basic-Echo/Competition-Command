@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竞赛获奖数据浏览</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>竞赛获奖数据浏览</h1>
+        </header>
+
+        <!-- 数据浏览区域（默认显示） -->
+        <div id="browseSection" class="browse-section">
+            <!-- 管理员操作区域 -->
+            <div class="admin-actions">
+                <div class="admin-status">
+                    <span id="adminStatus">游客模式</span>
+                    <button type="button" id="adminLoginBtn" class="admin-btn">管理员登录</button>
+                </div>
+                <!-- 存储容量显示区域 -->
+                <div class="storage-info">
+                    <div class="storage-label">存储使用情况：</div>
+                    <div class="storage-bar-container">
+                        <div class="storage-bar" id="storageBar"></div>
+                    </div>
+                    <div class="storage-details">
+                        <span id="usedStorage">已用: --</span>
+                        <span id="totalStorage">总计: --</span>
+                        <span id="remainingStorage">剩余: --</span>
+                    </div>
+                </div>
+            </div>
+            <section class="filter-section">
+                <h2>筛选条件</h2>
+                <div class="filter-row">
+                    <div class="filter-labels">
+                        <label for="filterName">姓名：</label>
+                        <label for="filterLevel">竞赛级别：</label>
+                        <label for="filterAward">获奖等级：</label>
+                        <label for="filterCompetition">竞赛名称：</label>
+                        <label>获奖年月区间：</label>
+                    </div>
+                    <div class="filter-inputs">
+                        <div class="autocomplete-container">
+                            <input type="text" id="filterName" name="filterName" placeholder="输入姓名" class="narrow-input autocomplete-input">
+                            <div id="nameAutocomplete" class="autocomplete-dropdown"></div>
+                        </div>
+                        <select id="filterLevel" name="filterLevel" class="narrow-select">
+                            <option value="">全部</option>
+                            <option value="校级">校级</option>
+                            <option value="省级">省级</option>
+                            <option value="国家级">国家级</option>
+                        </select>
+                        <select id="filterAward" name="filterAward" class="narrow-select">
+                            <option value="">全部</option>
+                            <option value="特等奖">特等奖</option>
+                            <option value="一等奖">一等奖</option>
+                            <option value="二等奖">二等奖</option>
+                            <option value="三等奖">三等奖</option>
+                        </select>
+                        <div class="autocomplete-container">
+                            <input type="text" id="filterCompetition" name="filterCompetition" placeholder="输入竞赛名称" class="wide-input autocomplete-input">
+                            <div id="competitionAutocomplete" class="autocomplete-dropdown"></div>
+                        </div>
+                        <div class="date-range-inputs">
+                            <div class="date-picker">
+                                <select id="filterStartYear" name="filterStartYear">
+                                    <option value="">年</option>
+                                </select>
+                                <select id="filterStartMonth" name="filterStartMonth">
+                                    <option value="">月</option>
+                                </select>
+                            </div>
+                            <span class="date-separator">-</span>
+                            <div class="date-picker">
+                                <select id="filterEndYear" name="filterEndYear">
+                                    <option value="">年</option>
+                                </select>
+                                <select id="filterEndMonth" name="filterEndMonth">
+                                    <option value="">月</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="filterBtn">筛选</button>
+                <button type="button" id="resetFilterBtn">重置筛选</button>
+                <button type="button" id="batchDeleteBtn" class="delete-btn" disabled>删除选中</button>
+                <button type="button" id="exportExcelBtn" class="export-btn">导出Excel</button>
+                <p id="resultCount" class="result-count">共找到 <span>0</span> 条记录</p>
+            </section>
+
+            <section class="data-section">
+                <h2>获奖信息列表</h2>
+                <div class="table-container">
+                    <table id="awardTable">
+                        <thead>
+                            <tr>
+                                <th class="admin-col"><input type="checkbox" id="selectAll"> 全选</th>
+                                <th>姓名</th>
+                                <th>专业</th>
+                                <th>获奖日期</th>
+                                <th>竞赛名称</th>
+                                <th>竞赛级别</th>
+                                <th>获奖等级</th>
+                                <th>证明</th>
+                                <th class="admin-col">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 获奖信息将在这里动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                <p id="noDataMessage" class="no-data-message" style="display: none;">暂无符合条件的数据</p>
+            </section>
+        </div>
+
+        <footer>
+            <p><a href="index.html">返回首页</a></p>
+        </footer>
+    </div>
+
+    <!-- 管理员登录弹窗 -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>管理员登录</h2>
+            <div class="form-group">
+                <label for="adminPassword">请输入管理员密码：</label>
+                <input type="password" id="adminPassword" name="adminPassword">
+                <span class="error-message" id="adminPasswordError"></span>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="adminVerifyBtn">登录</button>
+                <button type="button" id="adminCancelBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改信息弹窗 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>修改获奖信息</h2>
+            <form id="editForm">
+                <input type="hidden" id="editRecordId">
+                <div class="form-group">
+                    <label for="editName">姓名：</label>
+                    <input type="text" id="editName" name="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editMajor">专业：</label>
+                    <select id="editMajor" name="editMajor" required>
+                        <option value="电抗">电抗</option>
+                        <option value="电磁">电磁</option>
+                        <option value="电科">电科</option>
+                        <option value="信工">信工</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>获奖年月：</label>
+                    <div class="date-selector">
+                        <select id="editYear" name="editYear" required>
+                            <option value="">请选择年</option>
+                        </select>
+                        <select id="editMonth" name="editMonth" required>
+                            <option value="">请选择月</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editCompetition">竞赛名称：</label>
+                    <input type="text" id="editCompetition" name="editCompetition" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLevel">竞赛级别：</label>
+                    <select id="editLevel" name="editLevel" required>
+                        <option value="校级">校级</option>
+                        <option value="省级">省级</option>
+                        <option value="国家级">国家级</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editAward">获奖等级：</label>
+                    <select id="editAward" name="editAward" required>
+                        <option value="特等奖">特等奖</option>
+                        <option value="一等奖">一等奖</option>
+                        <option value="二等奖">二等奖</option>
+                        <option value="三等奖">三等奖</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editCertificate">获奖凭证（图片）</label>
+                    <input type="file" id="editCertificate" name="editCertificate" accept="image/*">
+                    <div class="image-preview" id="editCertificatePreview"></div>
+                    <input type="hidden" id="editCompetitionName">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" id="saveEditBtn">保存修改</button>
+                    <button type="button" id="cancelEditBtn">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+    
+    <!-- 图片查看器 -->
+    <div id="imageViewer" class="image-viewer">
+        <span class="image-viewer-close">&times;</span>
+        <div class="image-viewer-content">
+            <img id="viewerImage" src="" alt="获奖凭证">
+        </div>
+    </div>
+    
+    <!-- 删除确认弹窗 -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>确认删除</h2>
+            <p>您确定要删除这条获奖记录吗？此操作无法撤销。</p>
+            <div class="modal-actions">
+                <button id="confirmDeleteBtn" class="delete-btn">确认删除</button>
+                <button id="cancelDeleteBtn">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

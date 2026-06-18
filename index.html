@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竞赛获奖情况统计</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>竞赛获奖情况统计</h1>
+            <p>请填写个人信息和竞赛获奖信息</p>
+        </header>
+
+        <main>
+            <form id="awardForm">
+                <section class="personal-info">
+                    <h2>个人信息</h2>
+                    <div class="form-group">
+                        <label for="name">姓名 *</label>
+                        <input type="text" id="name" name="name" required>
+                        <span class="error-message" id="nameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="major">专业 *</label>
+                        <select id="major" name="major" required>
+                            <option value="">请选择专业</option>
+                            <option value="电抗">电抗</option>
+                            <option value="电磁">电磁</option>
+                            <option value="电科">电科</option>
+                            <option value="信工">信工</option>
+                        </select>
+                        <span class="error-message" id="majorError"></span>
+                    </div>
+                </section>
+
+                <section class="competition-info">
+                    <h2>竞赛信息</h2>
+                    <div id="competitionModules">
+                        <!-- 竞赛信息模块将在这里动态生成 -->
+                    </div>
+                    <button type="button" id="addModule" class="add-btn">添加竞赛信息</button>
+                </section>
+
+                <div class="form-actions">
+                    <button type="submit" id="submitBtn">提交</button>
+                    <button type="reset" id="resetBtn">重置</button>
+                </div>
+            </form>
+        </main>
+
+        <footer>
+            <p><a href="browse.html">获奖信息查询</a></p>
+        </footer>
+    </div>
+
+    <!-- 提交成功弹窗 -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>提交成功！</h2>
+            <p>您的竞赛获奖信息已成功提交。</p>
+            <div class="modal-actions">
+                <button id="resetFormBtn">填写新信息</button>
+                <button id="browseDataBtn">查看数据</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
