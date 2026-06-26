@@ -81,14 +81,16 @@ app.delete('/api/awards/:id', (req, res) => {
 app.use(express.static(__dirname));
 app.get('/', (req, res) => res.redirect('/index.html'));
 
-// 启动时生成支持二维码
+// 启动时生成支持二维码（SVG格式，不依赖canvas）
 const BASE_URL = process.env.BASE_URL || `http://localhost:${port}`;
-const QR_FILE = path.join(__dirname, 'support-qr.png');
-QRCode.toFile(QR_FILE, `${BASE_URL}/thanks.html`, {
+const QR_FILE = path.join(__dirname, 'support-qr.svg');
+QRCode.toString(`${BASE_URL}/thanks.html`, {
+  type: 'svg',
   width: 200,
   margin: 1,
   color: { dark: '#333333', light: '#ffffff' }
-}).then(() => {
+}).then(svg => {
+  fs.writeFileSync(QR_FILE, svg, 'utf8');
   console.log('二维码已生成:', QR_FILE);
 }).catch(err => {
   console.error('二维码生成失败:', err);
